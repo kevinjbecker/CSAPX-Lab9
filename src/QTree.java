@@ -6,12 +6,19 @@ import java.util.List;
 
 public class QTree
 {
+    /** The value of a node that indicates it is split into 4 sub-regions. */
     public static int QUAD_SPLIT = 4;
 
+    // private fields
+    /** The size of the compressed image. */
     private int compressedSize;
+    /** The square dimension of the tree. */
     private int dim;
+    /** The raw image. */
     private int [][] rawImage;
+    /** The size of the raw image. */
     private int rawSize;
+    /** The root node in the tree. */
     private FourZipNode root;
 
     /**
@@ -315,7 +322,7 @@ public class QTree
     }
 
     /**
-     * Load a raw image. The input file is ASCII text. It contains a series of grayscale values as decimal numbers
+     * Load a raw image. The input file is ASCII text. It contains a series of greyscale values as decimal numbers
      * (0-255). The dimension is assumed square, and is computed from the length of file. There is one value per line.
      *
      * @param inputFile the name of the file representing the raw image
@@ -360,18 +367,26 @@ public class QTree
     {
         if(node == null) { return ""; }
         return (node.getValue() != -1) ? Integer.toString(node.getValue()) :
-                "(" + preorder(node.getChild(Quadrant.UL)) + " " + preorder(node.getChild(Quadrant.UR)) + " " +
-                        preorder(node.getChild(Quadrant.LL)) + " " + preorder(node.getChild(Quadrant.LR)) + ")";
+                "( " + preorder(node.getChild(Quadrant.UL)) + " " + preorder(node.getChild(Quadrant.UR)) + " " +
+                        preorder(node.getChild(Quadrant.LL)) + " " + preorder(node.getChild(Quadrant.LR)) + " )";
     }
 
     /**
+     * Return a string that represents a preorder traversal of the tree. The node's (greyscale) image value is returned
+     * as a decimal string. However when the node's value is QUAD_SPLIT that value is not shown. Instead a left
+     * parenthesis is added before the children's to-string methods are called, and a right parenthesis is added
+     * afterwards. Spaces are inserted between all items.
+     * Example:
+     * ( 1 0 ( 1 2 2 2 ) 0 )
      *
-     * @return
+     * If the tree has no nodes, "NO TREE" is returned instead.
+     *
+     * @return The QTree string representation.
      */
     @Override
     public String toString()
     {
-        // returns the preorder traversal of the root
-        return preorder(this.root);
+        // returns the preorder traversal of the root if the root isn't null
+        return (this.root != null) ? preorder(this.root) : "NO TREE";
     }
 }
