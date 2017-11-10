@@ -17,18 +17,34 @@ public class QTree
 
     private boolean canCompressBlock(Coordinate start, int size)
     {
+        int first = rawImage[start.getRow()][start.getCol()];
+        for(int row = start.getRow(); row < start.getRow()+size; row++)
+        {
+            for(int col = start.getRow(); col < start.getRow()+size; col++)
+            {
+                if(rawImage[row][col] != first)
+                    return false;
+            }
+        }
         return true;
     }
 
 
     public void compress() throws FourZipException
     {
-
+        // compresses everything
+        this.root = compress(Coordinate.ORIGIN, this.dim);
     }
 
     private FourZipNode	compress(Coordinate start, int size)
     {
-        return null;
+        return (canCompressBlock(start, size) || size == 1) ? new FourZipNode(this.rawImage[start.getRow()][start.getCol()]):
+                new FourZipNode(
+                        compress(new Coordinate(start.getRow(), start.getCol()), size/2),
+                        compress(new Coordinate(start.getRow(), (start.getCol() + size/2)), size/2),
+                        compress(new Coordinate((start.getRow() + size/2), start.getCol()), size/2),
+                        compress(new Coordinate((start.getRow() + size/2), (start.getCol() + size/2)), size/2)
+                );
     }
 
     public int getCompressedSize()
