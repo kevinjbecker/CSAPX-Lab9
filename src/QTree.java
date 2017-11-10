@@ -2,7 +2,7 @@ import java.io.*;
 
 public class QTree
 {
-    public static int QUAD_SPLIT = -1;
+    public static int QUAD_SPLIT = 4;
 
     private int compressedSize;
     private int dim;
@@ -67,10 +67,49 @@ public class QTree
 
     public void uncompress() throws FourZipException
     {
-        // makes a new empty matrix
-        this.rawImage = new int[this.dim][this.dim];
+        // sets the raw image array to a new one
+        this.rawImage = new int [this.dim][this.dim];
+
+        // runs the uncompress routine
+        uncompress(Coordinate.ORIGIN, this.dim, this.root);
     }
 
+    /**
+     *
+     * @param coord
+     * @param dim2
+     * @param node
+     */
+    private void uncompress(Coordinate coord, int dim2, FourZipNode node)
+    {
+
+        // if this node has children, keep going
+        if(node.getValue() != -1)
+        {
+            for (int row = coord.getRow(); row < coord.getRow() + dim2; row++)
+            {
+                for(int col = coord.getCol(); col < coord.getCol() + dim2; col++)
+                {
+                    rawImage[row][col] = node.getValue();
+                }
+            }
+            return;
+        }
+        // upper left original row, original column
+        uncompress(new Coordinate(coord.getRow(), coord.getCol()), dim2/2, node.getChild(Quadrant.UL));
+        // upper right, original row, column + remaining columns/2
+        uncompress(new Coordinate(coord.getRow(), (coord.getCol() + dim2/2)), dim2/2, node.getChild(Quadrant.UR));
+        // lower left original row + remaining rows/2, original column
+        uncompress(new Coordinate(coord.getRow() + dim2/2, coord.getCol()), dim2/2, node.getChild(Quadrant.LL));
+        // lower right original row + remaining rows/2 , column + remaining columns/2
+        uncompress(new Coordinate(coord.getRow() + dim2/2, coord.getCol() + dim2/2), dim2/2, node.getChild(Quadrant.LR));
+    }
+
+    /**
+     *
+     * @param outputFile
+     * @throws IOException
+     */
     public void writeCompressed(String outputFile) throws IOException
     {
         FourZipNode node = new FourZipNode();
