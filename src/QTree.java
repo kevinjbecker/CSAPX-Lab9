@@ -2,7 +2,10 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class QTree
 {
@@ -336,20 +339,33 @@ public class QTree
         // initially makes an empty QTree
         QTree tree = new QTree();
 
-        // reads in all the lines from inputFile at once and puts them in a List
-        List<String> file = Files.readAllLines(Paths.get(inputFile), Charset.defaultCharset());
 
-        // number of lines in the file
-        tree.rawSize = file.size();
-        // sets the size of a side in the image
+        /* < file read in procedure > */
+
+        // makes a new Scanner pointing to the file
+        Scanner file = new Scanner(new File(inputFile));
+        // a List of Integers that are read in from the file
+        List<Integer> rawFile = new ArrayList<>();
+        // reading in the file here, it goes until we have no more ints left
+        while(file.hasNextInt()) { rawFile.add(file.nextInt()); }
+
+
+        /* < setting a few fields > */
+
+        // sets the rawSize of the file
+        tree.rawSize = rawFile.size();
+        // sets the dimensions of the image (the side/height)
         tree.dim = (int)Math.round(Math.sqrt(tree.rawSize));
+
+
+        /* < building rawImage 2D array > */
+
         // makes an empty rawImage array
         tree.rawImage = new int[tree.dim][tree.dim];
-
-        // goes through each number and sets the image's greyscale value
+        // pulls in each row and makes an array of it instead of going pixel by pixel
+        // sets the rawImage 2D array
         for(int row = 0; row < tree.dim; ++row)
-            for(int col = 0; col < tree.dim; ++col)
-                tree.rawImage[row][col] = Integer.parseInt(file.remove(0));
+            tree.rawImage[row] = rawFile.subList((row*tree.dim), ((row+1)*tree.dim)).stream().mapToInt(n->n).toArray();
 
         return tree;
     }
