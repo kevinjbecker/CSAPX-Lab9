@@ -176,16 +176,19 @@ public class QTree
     private void uncompress(Coordinate coord, int dim2, FourZipNode node)
     {
 
-        // if this node doesn't have children, set the rawImage to our value
+        // if this node doesn't have children, set the rawImage pixels to our value
         if(node.getValue() != -1)
         {
+            // faster than using Arrays.fill(rawImage[row], coord.getCol(), coord.getCol()+dim2, node.getValue());
             for (int row = coord.getRow(); row < coord.getRow() + dim2; ++row)
                 for(int col = coord.getCol(); col < coord.getCol() + dim2; ++col)
                     rawImage[row][col] = node.getValue();
+            // we return here so we don't waste any time trying to go further (which would also probably crash it)
             return;
         }
 
-        // otherwise keep going
+        // otherwise keep trying to uncompress
+
         // upper left original row, original column
         uncompress(new Coordinate(coord.getRow(), coord.getCol()), dim2/2, node.getChild(Quadrant.UL));
         // upper right, original row, column + remaining columns/2
@@ -287,7 +290,7 @@ public class QTree
         // if our rawImage is null, throw an error
         if(rawImage == null)
             throw new FourZipException("No raw image to compress yet.");
-        // compresses everything
+        // compresses everything (threads it using each quadrant to start)
         this.root = compress(Coordinate.ORIGIN, this.dim);
     }
 
