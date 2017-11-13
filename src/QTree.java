@@ -1,9 +1,5 @@
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -367,6 +363,7 @@ public class QTree
         for(int row = 0; row < tree.dim; ++row)
             tree.rawImage[row] = rawFile.subList((row*tree.dim), ((row+1)*tree.dim)).stream().mapToInt(n->n).toArray();
 
+        // returns the final constructed tree
         return tree;
     }
 
