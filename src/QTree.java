@@ -25,6 +25,7 @@ public class QTree
      */
     public QTree()
     {
+        // not really needed, but just to be certain they're the way we want them
         this.compressedSize = 0;
         this.dim = 0;
         this.rawImage = null;
@@ -41,6 +42,7 @@ public class QTree
      */
     public int getCompressedSize() throws FourZipException
     {
+        // check if we have a compressed image or not
         if(this.root == null)
             throw new FourZipException("No compressed image yet.");
         return compressedSize;
@@ -55,6 +57,7 @@ public class QTree
      */
     public int[][] getRawImage() throws FourZipException
     {
+        // check if we have a raw image to base upon
         if(this.rawImage == null)
             throw new FourZipException("No raw image yet.");
         return rawImage;
@@ -69,6 +72,7 @@ public class QTree
      */
     public int getRawSize() throws FourZipException
     {
+        // check if we actually /have/ a raw size
         if(rawImage == null)
             throw new FourZipException("No raw image yet.");
         return rawSize;
@@ -102,9 +106,11 @@ public class QTree
         // initially makes an empty QTree
         QTree tree = new QTree();
 
+        /* < file reader built >  */
         // constructs a new BufferedReader reading in the file
         BufferedReader file = new BufferedReader(new FileReader(filename));
 
+        /* < setting a few fields > */
         // the compressed size is the number of lines in the file
         tree.rawSize = Integer.parseInt(file.readLine());
         // set compressedSize to one since we just read the first line
@@ -112,6 +118,7 @@ public class QTree
         // the dimension is the square-root of the first line
         tree.dim = (int)Math.round(Math.sqrt(tree.rawSize));
 
+        /* < parsing the file in to root > */
         // set the root of the tree to be the return of the parse file on the remaining lines
         tree.root = parse(file);
 
@@ -147,6 +154,10 @@ public class QTree
      */
     public void uncompress() throws FourZipException
     {
+        // can't uncompress if there's no root
+        if(this.root == null)
+            throw new FourZipException("No compressed image yet.");
+
         // sets the raw image array to a new one
         this.rawImage = new int [this.dim][this.dim];
 
@@ -210,10 +221,9 @@ public class QTree
      */
     public void writeCompressed(String outFile) throws IOException, FourZipException
     {
-        // if the root is null, image hasn't been compressed yet
-        // throw this back to the compressor
+        // check if we have a compressed image to write
         if(this.root == null)
-            throw new FourZipException("Image has not been compressed yet.");
+            throw new FourZipException("No compressed image yet.");
 
         // make a new writer with outFile
         BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
@@ -289,7 +299,7 @@ public class QTree
     {
         // if our rawImage is null, throw an error
         if(rawImage == null)
-            throw new FourZipException("No raw image to compress yet.");
+            throw new FourZipException("No raw image yet.");
         // compresses everything (threads it using each quadrant to start)
         this.root = compress(Coordinate.ORIGIN, this.dim);
     }
@@ -340,7 +350,6 @@ public class QTree
 
 
         /* < file read in procedure > */
-
         // makes a new Scanner pointing to the file
         Scanner file = new Scanner(new File(inputFile));
         // a List of Integers that are read in from the file
@@ -350,7 +359,6 @@ public class QTree
 
 
         /* < setting a few fields > */
-
         // sets the rawSize of the file
         tree.rawSize = rawFile.size();
         // sets the dimensions of the image (the side/height)
@@ -358,7 +366,6 @@ public class QTree
 
 
         /* < building rawImage 2D array > */
-
         // makes an empty rawImage array
         tree.rawImage = new int[tree.dim][tree.dim];
         // pulls in each row and makes an array of it instead of going pixel by pixel
@@ -381,7 +388,10 @@ public class QTree
      */
     private String preorder(FourZipNode node)
     {
-        if(node == null) { return ""; }
+        // if node is null, return an empty string
+        if(node == null)
+            return "";
+        // return a preorder traversal of the node (parent, left, right)
         return (node.getValue() != -1) ? Integer.toString(node.getValue()) :
                 "( " + preorder(node.getChild(Quadrant.UL)) + " " + preorder(node.getChild(Quadrant.UR)) + " " +
                         preorder(node.getChild(Quadrant.LL)) + " " + preorder(node.getChild(Quadrant.LR)) + " )";
