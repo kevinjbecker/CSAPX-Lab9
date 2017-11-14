@@ -300,7 +300,7 @@ public class QTree
         // if our rawImage is null, throw an error
         if(rawImage == null)
             throw new FourZipException("No raw image yet.");
-        // compresses everything (threads it using each quadrant to start)
+        // compresses everything into a nice (hopefully smaller) package
         this.root = compress(Coordinate.ORIGIN, this.dim);
     }
 
