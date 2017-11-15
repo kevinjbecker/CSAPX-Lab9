@@ -122,6 +122,9 @@ public class QTree
         // set the root of the tree to be the return of the parse file on the remaining lines
         tree.root = parse(file);
 
+        // closes the file so no issues are encountered later on
+        file.close();
+
         // return our newly generated tree
         return tree;
     }
@@ -234,6 +237,9 @@ public class QTree
 
         // then, writes the tree
         writeCompressed(this.root, writer);
+
+        // closes the writer so that no errors are included
+        writer.close();
     }
 
     /**
@@ -372,6 +378,9 @@ public class QTree
         // sets the rawImage 2D array
         for(int row = 0; row < tree.dim; ++row)
             tree.rawImage[row] = rawFile.subList((row*tree.dim), ((row+1)*tree.dim)).stream().mapToInt(n->n).toArray();
+
+        // closes the file so we don't have any issues
+        file.close();
 
         // returns the final constructed tree
         return tree;
