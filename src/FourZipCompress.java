@@ -22,6 +22,7 @@ public class FourZipCompress {
         }
 
         try {
+            long start = System.nanoTime();
             // initialize the matrix
             QTree tree = QTree.rawFromFile( args[ 0 ] );
 
@@ -45,6 +46,7 @@ public class FourZipCompress {
                 )
                 + '%'
             );
+            System.out.println("Took " + ((System.nanoTime()-start)/1000000) + "ms.");
         }
         catch( Exception e ) {
             System.err.println( e.getMessage() );

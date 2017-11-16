@@ -1,7 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class QTree
 {
@@ -19,6 +17,8 @@ public class QTree
     private int rawSize;
     /** The root node in the tree. */
     private FourZipNode root;
+    /** The map of termination nodes which saves a heck of a lot of memory in the end */
+    private Map<Integer, FourZipNode> terminationNodes;
 
     /**
      * Create an initially empty tree.
@@ -31,6 +31,9 @@ public class QTree
         this.rawImage = null;
         this.rawSize = 0;
         this.root = null;
+
+        // except this, we need to to this or it blows up
+        this.terminationNodes = new HashMap<>();
     }
 
     /**
@@ -328,10 +331,18 @@ public class QTree
      */
     private FourZipNode	compress(Coordinate start, int size)
     {
+        if(size == 1 || canCompressBlock(start, size))
+        {
+            // if we have no record of the key, add it
+            if(!terminationNodes.containsKey(this.rawImage[start.getRow()][start.getCol()]))
+                terminationNodes.put(this.rawImage[start.getRow()][start.getCol()],
+                        new FourZipNode(this.rawImage[start.getRow()][start.getCol()]));
+            // return the node pointer
+            return terminationNodes.get(this.rawImage[start.getRow()][start.getCol()]);
+        }
         // if our size is one or we can compress the block, make a new FourZipNode with no children
         // otherwise we recurse into sub-quadrants
-        return (size == 1 || canCompressBlock(start, size)) ? new FourZipNode(this.rawImage[start.getRow()][start.getCol()]):
-                new FourZipNode(
+        return new FourZipNode(
                         compress(new Coordinate(start.getRow(), start.getCol()), size/2),
                         compress(new Coordinate(start.getRow(), (start.getCol() + size/2)), size/2),
                         compress(new Coordinate((start.getRow() + size/2), start.getCol()), size/2),
