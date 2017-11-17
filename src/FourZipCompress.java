@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 /**
  * 4-Zip compressor.  This program takes a raw image file of
  * grayscale values (0-255) and compresses them into the 4-Zip format.
@@ -48,7 +50,7 @@ public class FourZipCompress {
             );
             System.out.println("Took " + ((System.nanoTime()-start)/1000000) + "ms.");
         }
-        catch( Exception e ) {
+        catch( IOException | FourZipException e ) {
             System.err.println( e.getMessage() );
         }
     }

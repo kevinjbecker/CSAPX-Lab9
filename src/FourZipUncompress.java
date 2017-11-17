@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 /**
  * 4-Zip uncompressor. This program takes a 4-Zip-compressed file,
  * uncompresses it, and then displays the image using the provided GrayPicViewer.
@@ -34,7 +36,7 @@ public class FourZipUncompress {
             // finally display the image
             view.display( args[ 0 ] );
         }
-        catch( Exception e ) {
+        catch( IOException | FourZipException e ) {
             System.err.println( e.getMessage() );
         }
     }
