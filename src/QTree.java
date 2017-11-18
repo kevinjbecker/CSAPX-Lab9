@@ -4,7 +4,7 @@ import java.util.*;
 public class QTree
 {
     /** The value of a node that indicates it is split into 4 sub-regions. */
-    public static int QUAD_SPLIT = 4;
+    public static int QUAD_SPLIT = -1;
 
     // private fields
     /** The size of the compressed image. */
@@ -150,7 +150,7 @@ public class QTree
         // gets the number on the next line
         int line = Integer.parseInt(file.readLine());
         // if number isn't -1, we've reached a termination point, else parse again recursively
-        return (line != -1) ? new FourZipNode(line) : new FourZipNode(parse(file), parse(file), parse(file), parse(file));
+        return (line != QUAD_SPLIT) ? new FourZipNode(line) : new FourZipNode(parse(file), parse(file), parse(file), parse(file));
     }
 
     /**
@@ -194,7 +194,7 @@ public class QTree
     {
 
         // if this node doesn't have children, set the rawImage pixels to our value
-        if(node.getValue() != -1)
+        if(node.getValue() != QUAD_SPLIT)
         {
             // faster than using Arrays.fill(rawImage[row], coord.getCol(), coord.getCol()+dim2, node.getValue());
             for (int row = coord.getRow(); row < coord.getRow() + dim2; ++row)
@@ -262,7 +262,7 @@ public class QTree
         writer.flush();
 
         // if this node has children
-        if(node.getValue() == -1)
+        if(node.getValue() == QUAD_SPLIT)
         {
             // writes the upper left child
             writeCompressed(node.getChild(Quadrant.UL), writer);
